@@ -10,5 +10,5 @@ class CompareSignatures:
         return count/len(zipped)
 
 # example usage
-result = CompareSignatures.compare([1,2,3,4], [3,2,5,6])
-print(result)
+#result = CompareSignatures.compare([1,2,3,4], [3,2,5,6])
+#print(result)

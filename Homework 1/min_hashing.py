@@ -2,7 +2,17 @@ import random
 import sympy
 
 class MinHashing:
-    
+
+    def __init__(self, n: int = 100):
+        self.n = n
+        
+        # Record the maximum shingle ID that we assigned (we used 32 bits).
+        self.maxShingleID = 2**32-1
+        self.c = sympy.nextprime(self.maxShingleID)
+
+        self.a = self.get_coefficients(n)
+        self.b = self.get_coefficients(n)
+
     def get_coefficients(self, k):
         randList = []
       
@@ -17,7 +27,7 @@ class MinHashing:
 
         return randList
 
-    def get_signature(self, shingles: set):
+    def get_signature(self, shingles):
         signature = []
         
         #function will be: h(x) = (a*x + b) % c
@@ -33,18 +43,7 @@ class MinHashing:
 
         return signature
 
-
-    def __init__(self, n: int = 100):
-        self.n = n
-        
-        # Record the maximum shingle ID that we assigned (we used 32 bits).
-        self.maxShingleID = 2**32-1
-        self.c = sympy.nextprime(self.maxShingleID)
-
-        self.a = self.get_coefficients(n)
-        self.b = self.get_coefficients(n)
-
 # example usage
-m = MinHashing(2)
-result = m.get_signature([901544789, 2659403885, 3265866552])
-print(result)
+#m = MinHashing(2)
+#result = m.get_signature([901544789, 2659403885, 3265866552])
+#print(result)
