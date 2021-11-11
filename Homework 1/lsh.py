@@ -1,7 +1,6 @@
 import math
 import itertools
 import collections
-import pandas as pd
 from compare_signatures import CompareSignatures
 
 class LSH:
@@ -14,7 +13,10 @@ class LSH:
         similar_documents = []
         
         for candidate in self.get_candidates(signature_df):
-            similarity = CompareSignatures.compare(signature_df[candidate[0]], signature_df[candidate[1]])
+            similarity = CompareSignatures.compare(
+                signature_df.iloc[:,candidate[0]].to_numpy(),
+                signature_df.iloc[:,candidate[1]].to_numpy())
+            print(similarity)
             if similarity >= self.threshold:
                 similar_documents.append(candidate)
 

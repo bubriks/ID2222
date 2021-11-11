@@ -18,7 +18,7 @@ sets_compare_result = CompareSets.compare(s1.shingles, s3.shingles)
 print(f"Dissimilar {sets_compare_result}")
 
 #minhashing
-n = 3
+n = 100
 
 min_hashing = MinHashing(n)
 sinature_s1 = min_hashing.get_signature(s1.shingles)
@@ -31,7 +31,9 @@ signatures_compare_result = CompareSignatures.compare(sinature_s1, sinature_s3)
 print(f"Distinct approx. {signatures_compare_result}")
 
 #LSH
-lsh = LSH(2, 0.4)
+band_num = 30
+
+lsh = LSH(band_num, 0.5)
 import pandas as pd
 
 df = pd.DataFrame()
