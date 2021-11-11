@@ -12,26 +12,26 @@ class LSH:
 
     def similar(self, signature_matrix):
         similar_documents = []
-        df = pd.DataFrame(signature_matrix)
+        signature_df = pd.DataFrame(signature_matrix)
         
-        for candidate in self.get_candidates(signature_matrix):
-            similarity = CompareSignatures.compare(df[candidate[0]], df[candidate[1]])
+        for candidate in self.get_candidates(signature_df):
+            similarity = CompareSignatures.compare(signature_df[candidate[0]], signature_df[candidate[1]])
             if similarity >= self.threshold:
                 similar_documents.append(candidate)
 
         return similar_documents
         
-    def get_candidates(self, signature_matrix):
-        num_of_signatures, num_of_documents = signature_matrix.shape
+    def get_candidates(self, signature_df):
+        num_of_signatures, num_of_documents = signature_df.shape
         rows_in_band = math.ceil(num_of_signatures / self.band_num)
         
         candidate_pairs = set()
         for i in range(self.band_num):
-            band = signature_matrix[i*rows_in_band: (i+1)*rows_in_band]
+            band = signature_df[i*rows_in_band: (i+1)*rows_in_band]
 
             buckets = collections.defaultdict(set)
             for j in range(num_of_documents):
-                band_id = tuple(list(band[:,j]))
+                band_id = tuple(band.iloc[:,j].tolist())
                 buckets[band_id].add(j)
 
             for bucket in buckets.values():
@@ -42,11 +42,11 @@ class LSH:
 
 '''
 import numpy as np
-lsh = LSH(2)
+lsh = LSH(2, 0.34)
 arr = np.array([
     ["7", "7", "c"],
     ["4", "4", "f"], #rows are hashes
     ["s", "a", "a"]] #columns are documents
 )
-lsh.similar(arr)
+print(lsh.similar(arr))
 '''
