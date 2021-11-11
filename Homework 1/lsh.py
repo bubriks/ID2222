@@ -10,9 +10,8 @@ class LSH:
         self.band_num = band_num
         self.threshold = threshold
 
-    def similar(self, signature_matrix):
+    def similar(self, signature_df):
         similar_documents = []
-        signature_df = pd.DataFrame(signature_matrix)
         
         for candidate in self.get_candidates(signature_df):
             similarity = CompareSignatures.compare(signature_df[candidate[0]], signature_df[candidate[1]])

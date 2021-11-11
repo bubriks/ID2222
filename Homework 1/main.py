@@ -39,5 +39,5 @@ df['s1'] = sinature_s1
 df['s2'] = sinature_s2
 df['s3'] = sinature_s3
 
-lsh_similar_result = lsh.similar(df.to_numpy())
+lsh_similar_result = lsh.similar(df)
 print(f"similar {lsh_similar_result}")
