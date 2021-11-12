@@ -1,7 +1,6 @@
 from random import shuffle
 import sys
 sys.path.append("..")
-from shingling import Shingling
 
 class minHashing :
 
@@ -26,7 +25,7 @@ class minHashing :
             for i in range(1, self.vocab_size+1):
                 idx = func.index(i)
                 signature_val = vector_list[idx]
-                if signature_val == 1:
+                if signature_val == 1:#smallest possible value
                     signature.append(idx)
                     break
         return signature

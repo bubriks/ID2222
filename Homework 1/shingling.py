@@ -1,20 +1,19 @@
-import binascii
-
 class Shingling: 
 
     def __init__(self, text: str, k: int):
         self.shingles = set()
-        self.shingle_set = []
         text = text.lower()
         for i in range(len(text)+1-k):
             shingle = text[i:i+k]
-            self.shingle_set.append(shingle)
-            # Hash the shingle to a 32-bit integer.
-            hashed_value = binascii.crc32(bytes(shingle, 'utf-8')) & 0xffffffff
-            #hashed_value = shingle
-            self.shingles.add(hashed_value)
-            
-        self.shingles = sorted(self.shingles)
+            self.shingles.add(shingle)
+
+    @staticmethod
+    def get_vocabs(shingles_df):
+        return set().union(*shingles_df["data"].tolist())
+
+    @staticmethod
+    def one_hot_encoder(shingles_df, vocabs):
+        shingles_df["data"] = shingles_df.apply(lambda row: [1 if i in row["data"] else 0 for i in vocabs], axis=1)
 
 
 # # example usage

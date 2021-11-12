@@ -1,49 +1,38 @@
-import random
-import sympy
+from random import shuffle
+import pandas as pd
 
 class MinHashing:
 
-    def __init__(self, n: int = 100):
+    def __init__(self, vocab_size, n: int = 100):
+        self.vocab_size = vocab_size
         self.n = n
-        
-        # Record the maximum shingle ID that we assigned (we used 32 bits).
-        self.maxShingleID = 2**32-1
-        self.c = sympy.nextprime(self.maxShingleID)
+        self.build_permutations(vocab_size) 
 
-        self.a = self.get_coefficients(n)
-        self.b = self.get_coefficients(n)
-
-    def get_coefficients(self, k):
-        randList = []
-      
-        for i in range(k):
-            # Get a random shingle ID.
-            randIndex = random.randint(0, self.maxShingleID)
-            # Ensure that each random number is unique.
-            while randIndex in randList:
-                randIndex = random.randint(0, self.maxShingleID)
-            # Add the random number to the list.
-            randList.append(randIndex)
-
-        return randList
-
-    def get_signature(self, shingles):
+    def get_signature(self, vector_list):
         signature = []
-        
-        #function will be: h(x) = (a*x + b) % c
-        for i in range(self.n):
-            minHashCode = self.c + 1
-            
-            for x in shingles:
-                hashCode = (self.a[i] * x + self.b[i]) % self.c
-                if hashCode < minHashCode:
-                    minHashCode = hashCode
-            
-            signature.append(minHashCode)
-
+        for hash_ex in self.permutations:
+            df = pd.DataFrame(vector_list, index=hash_ex)
+            df = df.sort_index()
+            signature.append(df[df[0] == 1].first_valid_index())
         return signature
 
+    def get_df_signature(self, vectors_df):
+        signatures_df = pd.DataFrame()
+        for i in vectors_df.columns.tolist():
+            signatures_df[i] = self.get_signature(vectors_df[i].tolist())
+        return signatures_df
+
+    def build_permutations(self, vocab_size):
+        # function for building multiple permutations
+        self.permutations = []
+        for _ in range(self.n):
+            hash_ex = list(range(vocab_size))
+            shuffle(hash_ex)
+            self.permutations.append(hash_ex)
+
 # example usage
-#m = MinHashing(2)
-#result = m.get_signature([901544789, 2659403885, 3265866552])
+#m = MinHashing(3, 2)
+#df = pd.DataFrame([[1,1,0], [1,0,0]]).T
+#result = m.get_signature(df)
+#result = m.get_signature([1,0,0])
 #print(result)

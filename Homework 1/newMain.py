@@ -1,7 +1,3 @@
-
-import numpy as np
-from numpy import single
-
 import shingling as sh
 from compareSets import CompareSets
 from compare_signatures import CompareSignatures
@@ -13,14 +9,14 @@ import itertools
 from _operator import itemgetter
 
 def make_clean_file() :
-    data_path = os.path.join(os.getcwd(),'Homework 1', "[UCI] AAAI-13 Accepted Papers - Papers.csv")
+    data_path = os.path.join(os.getcwd(),"[UCI] AAAI-13 Accepted Papers - Papers.csv")
     dataset = pd.read_csv(data_path)
     #### removed all the new line char & carrage return char
     changed_data = dataset.copy()
     for i, _ in enumerate(changed_data.iterrows()) :
         changed_data['Keywords'][i] = changed_data['Keywords'][i].lower().replace('\n\r', ' ').replace('\n', ' ').replace('  ',' ')
         changed_data['Abstract'][i] = changed_data['Abstract'][i].lower().replace('\n\r', ' ').replace('\n', ' ').replace('\em',' ').replace('"',' ').replace('  ',' ')
-    changed_data.to_csv(os.path.join(os.getcwd(),'Homework 1', "remove_newline_char.csv"))
+    changed_data.to_csv(os.path.join(os.getcwd(), "remove_newline_char.csv"))
 
 def print_results(dataset, result_dict, item='Keywords', lsh=False):
 
@@ -38,7 +34,7 @@ if __name__ == "__main__":
     ###########################################################################
 
     # read real dataset
-    data_path = os.path.join(os.getcwd(),'Homework 1', "remove_newline_char.csv")#"remove_newline_char.csv") #original file name : [UCI] AAAI-13 Accepted Papers - Papers.csv
+    data_path = os.path.join(os.getcwd(), "remove_newline_char.csv")#"remove_newline_char.csv") #original file name : [UCI] AAAI-13 Accepted Papers - Papers.csv
     dataset = pd.read_csv(data_path)
 
     # all possible compare
@@ -63,6 +59,10 @@ if __name__ == "__main__":
         vector = [1 if x in s else 0 for x in vocabs]
         shingle_one_hot.append(vector)
         signatures.append(minHash.create_hash(vector))
+        
+    print(shingle_set)
+    print(signatures)
+    assert(1 ==2)
 
     for idx in indexes :
         c1 = shingle_one_hot[idx[0]]
@@ -94,7 +94,12 @@ if __name__ == "__main__":
     Threshold = 0.5
     print(f'************* Threshold {Threshold} *****************')
     lsh = LSH(band_num=8, threshold=Threshold)
-    result3 = lsh.similar(np.array(signatures).T)
+    import pandas as pd
+
+    df = pd.DataFrame(signatures)
+    print(df)
+    
+    result3 = lsh.similar(df)
     print(result3)
     if len(result3) > 0 :
         print_results(dataset, result3, 'Keywords', lsh=True)
@@ -150,7 +155,12 @@ if __name__ == "__main__":
     Threshold = 0.1
     print(f'************* Threshold {Threshold} *****************')
     lsh = LSH(band_num=16, threshold=Threshold)
-    result3 = lsh.similar(np.array(signature_abs).T)
+    import pandas as pd
+
+    df = pd.DataFrame(signature_abs)
+    print(df)
+    
+    result3 = lsh.similar(df)
     print(result3)
     if len(result3) > 0 :
         print_results(dataset, result3, 'Abstract', lsh=True)

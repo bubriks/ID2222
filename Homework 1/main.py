@@ -1,45 +1,82 @@
+import os
+import pandas as pd
+import itertools
+
 from shingling import Shingling
 from compare_sets import CompareSets
 from min_hashing import MinHashing
 from compare_signatures import CompareSignatures
 from lsh import LSH
 
-#Shingling
-k = 3
+def make_clean_file() :
+    data_path = os.path.join(os.getcwd(),"[UCI] AAAI-13 Accepted Papers - Papers.csv")
+    dataset = pd.read_csv(data_path)
+    #### removed all the new line char & carrage return char
+    changed_data = dataset.copy()
+    for i, _ in enumerate(changed_data.iterrows()) :
+        changed_data['Keywords'][i] = changed_data['Keywords'][i].lower().replace('\n\r', ' ').replace('\n', ' ').replace('  ',' ')
+        changed_data['Abstract'][i] = changed_data['Abstract'][i].lower().replace('\n\r', ' ').replace('\n', ' ').replace('\em',' ').replace('"',' ').replace('  ',' ')
+    changed_data.to_csv(os.path.join(os.getcwd(), "remove_newline_char.csv"))
 
-s1 = Shingling("The dog which chased the cat", k)
-s2 = Shingling("The dog that chased the cat", k)
-s3 = Shingling("The movie 'cats' made no sense", k)
+if __name__ == "__main__":
+    ######################### call this function only once ####################
+    # make_clean_file() # this function is for making clean file
+    ###########################################################################
+    
+    # read real dataset
+    data_path = os.path.join(os.getcwd(), "remove_newline_char.csv") # original file name : [UCI] AAAI-13 Accepted Papers - Papers.csv
+    df = pd.read_csv(data_path)
+    df_len = len(df)
+    
+    # all possible combinations
+    combinations = list(itertools.combinations(list(range(df_len)), 2))
+    
+    #Shingling
+    k = 3 # small number due to small files being compared
+    shingles = df.apply(lambda row: list(Shingling(row['Keywords'], k).shingles), axis=1)
+    shingles_df = pd.DataFrame(shingles, columns=["data"])
+    vocabs = Shingling.get_vocabs(shingles_df) # all shingles
+    vocabs_len = len(vocabs)
+    Shingling.one_hot_encoder(shingles_df, vocabs)
+    
+    # transpose to make documents into columns
+    vectors_df = pd.DataFrame(shingles_df["data"].tolist()).T
+    del shingles_df # delete shingles_df to save memory
+    
+    #time this..
+    #Jaccard
+    maximum = 0
+    for set1_id, set2_id in combinations:
+        set1 = vectors_df[set1_id].tolist()
+        set2 = vectors_df[set2_id].tolist()
+        sim = CompareSets.compare(set1, set2)
+        if sim > maximum:
+            maximum = sim
+        #print(f"set {set1_id} has similarity of {sim} to {set2_id}")
+    print(maximum)
+    
+    #time this..
+    
+    #MinHashing
+    n = 32 # number of permutations
+    minHash = MinHashing(vocabs_len, n)
+    signatures_df = minHash.get_df_signature(vectors_df)
 
-#Jaccard
-sets_compare_result = CompareSets.compare(s1.shingles, s2.shingles)
-print(f"similar {sets_compare_result}")
-sets_compare_result = CompareSets.compare(s1.shingles, s3.shingles)
-print(f"Dissimilar {sets_compare_result}")
 
-#minhashing
-n = 100
+    #CompareSignatures
+    for set1_id, set2_id in combinations:
+        set1 = signatures_df[set1_id].tolist()
+        set2 = signatures_df[set2_id].tolist()
+        sim = CompareSignatures.compare(set1, set2)
+        #print(f"set {set1_id} has similarity of {sim} to {set2_id}")
 
-min_hashing = MinHashing(n)
-sinature_s1 = min_hashing.get_signature(s1.shingles)
-sinature_s2 = min_hashing.get_signature(s2.shingles)
-sinature_s3 = min_hashing.get_signature(s3.shingles)
+    #time this..
 
-signatures_compare_result = CompareSignatures.compare(sinature_s1, sinature_s2)
-print(f"similar approx. {signatures_compare_result}")
-signatures_compare_result = CompareSignatures.compare(sinature_s1, sinature_s3)
-print(f"Distinct approx. {signatures_compare_result}")
+    band_num = 5
+    threshold = 0.5
+    lsh = LSH(band_num, threshold)
+    similar = lsh.similar(vectors_df)
+    print(f"sets with similarity of {threshold} are: {similar}")
 
-#LSH
-band_num = 30
-
-lsh = LSH(band_num, 0.5)
-import pandas as pd
-
-df = pd.DataFrame()
-df['s1'] = sinature_s1
-df['s2'] = sinature_s2
-df['s3'] = sinature_s3
-
-lsh_similar_result = lsh.similar(df)
-print(f"similar {lsh_similar_result}")
+    print(df['Keywords'][90])
+    print(df['Keywords'][85])

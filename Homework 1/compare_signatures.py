@@ -3,7 +3,7 @@ class CompareSignatures:
     def compare(signatures1, signatures2):
         count = 0
         zipped = list(zip(signatures1, signatures2))
-        for s1, s2 in zipped:
+        for s1, s2 in list(zip(signatures1, signatures2)):
             if s1 == s2:
                 count = count + 1
 

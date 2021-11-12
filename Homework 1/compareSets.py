@@ -11,14 +11,13 @@ class CompareSets:
         self.jaccard_sim = self.comparefunc(set1, set2)
 
         
+'''
+#example
+c1 = Shingling("abcabv", 2)
+c2 = Shingling("abcaa",2)
+print(c1.shingles)
+print(c2.shingles)
+sim = CompareSets(c2.shingles, c1.shingles)
+print(sim.jaccard_sim)
 
-# #example
-# c1 = Shingling("abcab", 2)
-# c2 = Shingling("abcaa",2)
-# vocab = list(c1.shingle_set.union(c2.shingle_set))
-# c1_onehot = [1 if x in c1.shingle_set else 0 for x in vocab]
-# c2_onehot = [1 if x in c2.shingle_set else 0 for x in vocab]
-# sim = CompareSets(c1_onehot, c2_onehot)
-# print(sim.jaccard_sim)
-
-
+'''

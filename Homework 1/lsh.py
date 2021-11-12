@@ -16,7 +16,6 @@ class LSH:
             similarity = CompareSignatures.compare(
                 signature_df.iloc[:,candidate[0]].to_numpy(),
                 signature_df.iloc[:,candidate[1]].to_numpy())
-            print(similarity)
             if similarity >= self.threshold:
                 similar_documents.append(candidate)
 
