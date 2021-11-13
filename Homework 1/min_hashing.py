@@ -1,12 +1,27 @@
 from random import shuffle
 import pandas as pd
+from compare_signatures import CompareSignatures
 
 class MinHashing:
 
-    def __init__(self, vocab_size, n: int = 100):
+    def __init__(self, vocab_size, n: int = 100,  threshold=0.8):
         self.vocab_size = vocab_size
         self.n = n
-        self.build_permutations(vocab_size) 
+        self.build_permutations(vocab_size)
+        self.threshold = threshold
+    
+    def similar(self, combinations, vector_list):
+        similar_documents = []
+        
+        signatures_df = self.get_df_signature(vector_list)
+        for set1_id, set2_id in combinations:
+            set1 = signatures_df[set1_id].tolist()
+            set2 = signatures_df[set2_id].tolist()
+            sim = CompareSignatures.compare(set1, set2)
+            if sim >= self.threshold:
+                similar_documents.append((set1_id, set2_id))
+
+        return similar_documents    
 
     def get_signature(self, vector_list):
         signature = []

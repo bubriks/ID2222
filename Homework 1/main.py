@@ -7,7 +7,6 @@ from contextlib import contextmanager
 from shingling import Shingling
 from compare_sets import CompareSets
 from min_hashing import MinHashing
-from compare_signatures import CompareSignatures
 from lsh import LSH
 
 def make_clean_file() :
@@ -26,10 +25,8 @@ def do_jaccard(combinations, vectors_df, threshold):
     print(f"Sets with similarity of {threshold} in Jaccard are: {similar}")
 
 def do_minhashing(vocabs_len, n, combinations, vectors_df, threshold):
-    minHash = MinHashing(vocabs_len, n)
-    signatures_df = minHash.get_df_signature(vectors_df)
-    compare = CompareSignatures(threshold)
-    similar = compare.similar(combinations, signatures_df)
+    minHash = MinHashing(vocabs_len, n, threshold)
+    similar = minHash.similar(combinations, vectors_df)
     print(f"Sets with similarity of {threshold} in MinHashing are: {similar}")
 
 def do_lsh(band_num, vectors_df, threshold):
