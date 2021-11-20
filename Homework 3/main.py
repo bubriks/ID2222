@@ -16,7 +16,7 @@ print(f"number of Nodes: {len(np.unique(df[['FromNodeId', 'ToNodeId']].values))}
 print(df)
 
 class Action:
-    ADD = 1
+    ADD = 0
     REMOVE = 1
 
 class TriestBase:
@@ -64,13 +64,12 @@ class TriestBase:
             elif operation == Action.REMOVE:
                 self.tau -= 1
                 self.counters[element] = self.counters.get(element, 0) - 1
+                self.counters[edge[0]] = self.counters.get(edge[0], 0) - 1
+                self.counters[edge[1]] = self.counters.get(edge[1], 0) - 1
                 if self.counters[element] <= 0:
                     del self.counters[element]
                     del self.counters[edge[0]]
                     del self.counters[edge[1]]
-                else:
-                    self.counters[edge[0]] = self.counters.get(edge[0], 0) - 1
-                    self.counters[edge[1]] = self.counters.get(edge[1], 0) - 1
 
     def run(self, df):
         total = len(df)
