@@ -79,8 +79,9 @@ class TriestBase:
             if self.sample_edge(edge):
                 self.sample.add(edge)
                 self.update_counters(Action.ADD, edge)
-            print(f"done: {round((index/total) * 100, 1)}%", end="\r")
+            print(f"Progress: {round((index/total) * 100, 1)}%", end="\r")
         x = max([1, (self.t*(self.t-1)*(self.t-2))/(self.m*(self.m-1)*(self.m-2))])
+        print()# add empty line
         return self.tau * x
 
 def run(sample_size):
