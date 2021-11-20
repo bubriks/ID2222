@@ -6,7 +6,7 @@ from timeit import default_timer
 from contextlib import contextmanager
 
 def read_baskets():
-    with open(os.path.join(os.getcwd(), 'Homework 2', "T10I4D100K.dat"), "r") as f:
+    with open(os.path.join(os.getcwd(), "T10I4D100K.dat"), "r") as f:
         lines = f.read().splitlines()
         group_list = [list(set(i.strip().split(" "))) for i in lines] #list(set) to remove duplicates on the basket (not interesting for us)
     return group_list
@@ -24,10 +24,10 @@ def generate_candidates(frequent_itemset, singletons):
 def count_candidates(candidates, tuple_size):
     for basket in baskets:
         basket_variations = itertools.combinations(basket, tuple_size) #all variation for the tuple size
-        for var in basket_variations :
-            var = tuple(sorted(var))
-            if var in candidates :
-                candidates[var] += 1
+        for combination in basket_variations :
+            combination = tuple(sorted(combination))
+            if combination in candidates :
+                candidates[combination] += 1
     
     return candidates
 
@@ -42,8 +42,8 @@ def print_freq_itemse(items) :
 
         print('\n', prefix, f'[{len(i)}] :\n', sorted(i.items(), key=lambda item:item[1], reverse=True))
 
-def get_confidence(frequent_itemset, effect, length):
-    frequent_itemset_support = frequent_itemsets[length - 1][frequent_itemset]
+def get_confidence(frequent_itemset, effect):
+    frequent_itemset_support = frequent_itemsets[len(frequent_itemset) - 1][frequent_itemset]
     effect_support = frequent_itemsets[len(effect) - 1][effect]
     return round(frequent_itemset_support / effect_support, 2)
 
@@ -62,12 +62,12 @@ if __name__=="__main__" :
     support = 1000
 
     with elapsed_timer() as elapsed:
-        #singletons
+        # singletons
         candidates = collections.Counter(list(numpy.concatenate(baskets).flat))
         singletons = {(value,): count for value, count in candidates.items() if count >= support}
         frequent_itemsets.append(singletons)
 
-        # multitons (not sure if its a word :D )
+        # multitones
         k = 0
         while len(frequent_itemsets[k]) > 1: # more than 1 element in the list
             tuple_size = k + 2
@@ -92,7 +92,7 @@ if __name__=="__main__" :
                         if effect in seen_effect:# continue if such a combinations was considered for this tuple
                             continue
                         seen_effect.append(effect)
-                        confidence = get_confidence(tuple(sorted(tuple_permutation)), effect, len(tuple_permutation))
+                        confidence = get_confidence(tuple(sorted(tuple_permutation)), effect)
                         if confidence >= c:
                             effect = tuple_permutation[:effect_size]
                             result = tuple_permutation[effect_size:]
