@@ -23,7 +23,7 @@ class TriestBase:
 
     def __init__(self, m):
         if m < 6:
-            raise Exception('Limit < 6')
+            raise Exception("Limit < 6")
         self.t = 0 # total
         self.m = m # limit of edges
         self.sample = set() # sample of the stream
@@ -34,7 +34,7 @@ class TriestBase:
         return rnd.random() <= (self.m / self.t)
 
     def sample_edge(self, edge):
-        if self.t < self.m:
+        if self.t <= self.m:
             return True
         if self.flip_coin():
             element = rnd.sample(self.sample, 1)[0]
@@ -43,7 +43,7 @@ class TriestBase:
             return True
         return False
 
-    def update_counters(self, operation, edge: tuple):
+    def update_counters(self, operation, edge: tuple): # edge[0] = from, edge[1] = to
         s1 = set()
         s2 = set()
         for element in self.sample:
@@ -55,26 +55,25 @@ class TriestBase:
                 s2.add(element[1])
             if element[1] == edge[1]:
                 s2.add(element[0])
-        for element in set(s1).intersection(s2):
-            if operation == Action.ADD:
+        for node in s1.intersection(s2):
+            if operation is Action.ADD:
                 self.tau += 1
-                self.counters[element] = self.counters.get(element, 0) + 1
+                self.counters[node] = self.counters.get(node, 0) + 1
                 self.counters[edge[0]] = self.counters.get(edge[0], 0) + 1
                 self.counters[edge[1]] = self.counters.get(edge[1], 0) + 1
-            elif operation == Action.REMOVE:
+            elif operation is Action.REMOVE:
                 self.tau -= 1
-                self.counters[element] = self.counters.get(element, 0) - 1
+                self.counters[node] = self.counters.get(node, 0) - 1
                 self.counters[edge[0]] = self.counters.get(edge[0], 0) - 1
                 self.counters[edge[1]] = self.counters.get(edge[1], 0) - 1
-                if self.counters[element] <= 0:
-                    del self.counters[element]
+                if self.counters[node] <= 0:
+                    del self.counters[node]
                     del self.counters[edge[0]]
                     del self.counters[edge[1]]
 
-    def run(self, df):
-        total = len(df)
-        for index, row in df.iterrows():
-            edge = tuple([row['FromNodeId'], row['ToNodeId']])
+    def run(self, data):
+        total = len(data)
+        for index, edge in enumerate(data):
             self.t += 1
             if self.sample_edge(edge):
                 self.sample.add(edge)
@@ -87,14 +86,20 @@ class TriestBase:
 def run(sample_size):
     print(f"Testing TRIEST with sample size {sample_size}:")
     triest = TriestBase(sample_size)
-    result = triest.run(df)
+    result = triest.run(data)
     print(f"Value: {result}")
     return result
 
 if __name__=="__main__" :
     df = df[:][:10000] # pick part of the dataframe for faster computation
+    #df = df.drop_duplicates(subset=['FromNodeId','ToNodeId'])
+    
+    data = set() # made into set, to randomize the order
+    for index, row in df.iterrows():
+        data.add(tuple([row["FromNodeId"], row["ToNodeId"]]))
 
     expected = run(1000)
-    true = run(len(df))
-    print(f"Difference: {round(abs(expected - true) / true * 100)}%")
-    print(f"Error: {abs(true - expected)} triangles")
+    true = run(len(data))
+    error = abs(expected - true)
+    print(f"Difference: {round(error / true * 100)}%")
+    print(f"Error: {error} triangles")

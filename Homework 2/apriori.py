@@ -79,7 +79,7 @@ if __name__=="__main__" :
     print_freq_itemse(frequent_itemsets)
     print(f"\ntime taken for a-priori {elapsed()} s\n")
 
-    c = 0.6
+    c = 0.5# Confidence
 
     with elapsed_timer() as elapsed:
         for frequent_itemset in frequent_itemsets[1:]:# anything with more than 1 element in the tuple
