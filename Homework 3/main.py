@@ -26,9 +26,9 @@ class TriestBase:
             raise Exception("Limit < 6")
         self.t = 0 # total
         self.m = m # limit of edges
-        self.sample = set() # sample of the stream
-        self.tau = 0
-        self.counters = {}
+        self.sample = set() # edge sample of the stream
+        self.tau = 0 # global number of triangles
+        self.counters = {} # local counters
 
     def flip_coin(self):# biased coin with heads probability m/t
         return rnd.random() <= (self.m / self.t)
@@ -103,3 +103,16 @@ if __name__=="__main__" :
     error = abs(expected - true)
     print(f"Difference: {round(error / true * 100)}%")
     print(f"Error: {error} triangles")
+
+# Todo temp:
+# What were the challenges you have faced when implementing the algorithm?
+# at first the edges were ordered and this produced incorrect estimates, but utilizing tuples hashes for building set allowed for random ordering that would be consistent across the runs
+
+# Can the algorithm be easily parallelized? If yes, how? If not, why? Explain.
+# It could be possible but would require substantial effort, as workers would be needed to synchronize the data such as edge samples and triangle count between them.
+
+# Does the algorithm work for unbounded graph streams? Explain.
+# Yes, it does, because it uses reservoir sampling. Meaning that memory usage will not exceed the preset maximum (a common issue when using a probability for sampling).
+
+# Does the algorithm support edge deletions? If not, what modification would it need? Explain.
+# The implemented algorithm supports insertion-only streams, to be able to delete edges trièst-fd should be implemented. It uses random pairing, with the idea being that any edge deleted will be subsequently resolved by an insertion.
