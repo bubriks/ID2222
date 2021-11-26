@@ -5,7 +5,8 @@ import pandas as pd
 import numpy as np
 import random as rnd
 
-# Directed graph (each unordered pair of nodes is saved once): web-Google.txt 
+# Directed graph (each unordered pair of nodes is saved once): web-Google.txt
+### We might need to consider undirected graph, so another dataset could be used!!!!
 # Webgraph from the Google programming contest, 2002
 # Nodes: 875713 Edges: 5105039
 df = pd.read_csv("web-Google.txt", sep="\t")
@@ -103,16 +104,3 @@ if __name__=="__main__" :
     error = abs(expected - true)
     print(f"Difference: {round(error / true * 100)}%")
     print(f"Error: {error} triangles")
-
-# Todo temp:
-# What were the challenges you have faced when implementing the algorithm?
-# at first the edges were ordered and this produced incorrect estimates, but utilizing tuples hashes for building set allowed for random ordering that would be consistent across the runs
-
-# Can the algorithm be easily parallelized? If yes, how? If not, why? Explain.
-# It could be possible but would require substantial effort, as workers would be needed to synchronize the data such as edge samples and triangle count between them.
-
-# Does the algorithm work for unbounded graph streams? Explain.
-# Yes, it does, because it uses reservoir sampling. Meaning that memory usage will not exceed the preset maximum (a common issue when using a probability for sampling).
-
-# Does the algorithm support edge deletions? If not, what modification would it need? Explain.
-# The implemented algorithm supports insertion-only streams, to be able to delete edges trièst-fd should be implemented. It uses random pairing, with the idea being that any edge deleted will be subsequently resolved by an insertion.
