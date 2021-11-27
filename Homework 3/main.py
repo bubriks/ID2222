@@ -197,7 +197,7 @@ if __name__=="__main__" :
 
     diffs = []
     times = []
-    size = 1250
+    size = 1750
     # for size in sizes :
     with elapsed_timer() as elapsed:
         print(f"\n[TRIEST IMPR] Size [{size}]\n")
