@@ -170,7 +170,7 @@ if __name__=="__main__" :
     sizes = [500, 750, 1000, 1250, 1500, 1750, 2000]
     # diffs = []
     # times = []
-    size = 1250
+    size = 1750
     # for size in sizes :
     with elapsed_timer() as elapsed:
         print(f"\n[TRIEST BASE] Size [{size}]\n")
