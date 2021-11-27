@@ -1,5 +1,5 @@
 # paper used for implementation: http://www.kdd.org/kdd2016/papers/files/rfp0465-de-stefaniA.pdf
-# dataset used: https://snap.stanford.edu/data/web-Google.html
+# dataset used: https://snap.stanford.edu/data/ego-Facebook.html
 
 import pandas as pd
 import numpy as np
@@ -9,11 +9,8 @@ import matplotlib.pyplot as plt
 from timeit import default_timer
 from contextlib import contextmanager
 
-# Directed graph (each unordered pair of nodes is saved once): web-Google.txt
-### We might need to consider undirected graph, so another dataset could be used!!!!
-# Webgraph from the Google programming contest, 2002
-# Nodes: 875713 Edges: 5105039
-df = pd.read_csv(os.path.join(os.getcwd(), "Homework 3", "web-Google.txt"), sep="\t")
+# Undirected graph: facebook_combined.txt
+df = pd.read_csv(os.path.join(os.getcwd(), "Homework 3", "facebook_combined.txt"), delim_whitespace=True, names=['FromNodeId', 'ToNodeId'])
 
 print(f"number of edges: {len(df)}")
 print(f"number of Nodes: {len(np.unique(df[['FromNodeId', 'ToNodeId']].values))}")
