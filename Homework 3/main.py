@@ -94,9 +94,9 @@ class TriestImprove(TriestBase):
             raise Exception("Limit < 6")
         self.t = 0 # total
         self.m = m # limit of edges
-        self.sample = set() # sample of the stream
-        self.tau = 0
-        self.counters = {}
+        self.sample = set() # edge sample of the stream
+        self.tau = 0 # global number of triangles
+        self.counters = {} # local counters
 
     def sample_edge(self, edge):
         if self.t <= self.m:
@@ -104,11 +104,10 @@ class TriestImprove(TriestBase):
         if self.flip_coin():
             element = rnd.sample(self.sample, 1)[0]
             self.sample.remove(element)
-            # self.update_counters(Action.REMOVE, edge)
             return True
         return False
 
-    def update_counters(self, operation, edge: tuple): # edge[0] = from, edge[1] = to
+    def update_counters(self, edge: tuple): # edge[0] = from, edge[1] = to
         s1 = set()
         s2 = set()
         for element in self.sample:
@@ -131,12 +130,10 @@ class TriestImprove(TriestBase):
         total = len(data)
         for index, edge in enumerate(data):
             self.t += 1
-            self.update_counters(Action.ADD, edge)
+            self.update_counters(edge)
             if self.sample_edge(edge):
                 self.sample.add(edge)
-
             print(f"Progress: {round((index/total) * 100, 1)}%", end="\r")
-
         print()# add empty line
         return self.tau
 
@@ -195,9 +192,6 @@ if __name__=="__main__" :
     # ax2.plot(sizes, times, color='green')
     # plt.show()
 
-    diffs = []
-    times = []
-    size = 1250
     # for size in sizes :
     with elapsed_timer() as elapsed:
         print(f"\n[TRIEST IMPR] Size [{size}]\n")
