@@ -148,6 +148,54 @@ def run_improved(sample_size, data):
     print(f"Value: {result}")
     return result
 
+def draw_graph(sizes, times, expects, trues, name) :
+    fig, ax1 = plt.subplots()
+    ax1.set_xlabel('Sample size')
+    ax1.set_ylabel('Error triangles')
+    ax1.plot(sizes, expects, color='red', label='Error triangles')
+    ax1.plot(sizes, trues, label='True value')
+    ax1.set_ylim([23000, 60000])
+    ax1.legend(loc='lower right')
+    ax2 = ax1.twinx()
+    ax2.set_ylabel('Elapsed time(s)')
+    ax2.plot(sizes, times, color='green',linestyle = '--', label='Elapsed time')
+    ax2.legend(loc='upper right')
+    plt.savefig(os.path.join(os.getcwd(), name))
+
+
+def test_with_multi_samples(data):
+    sizes = [500, 750, 1000, 1250, 1500, 1750, 2000]
+    expects = []
+    times = []
+    true = run_base(len(data), data)
+    trues = [true for i in range(7)]
+    # size = 1750
+    for size in sizes :
+        with elapsed_timer() as elapsed:
+            print(f"\n[TRIEST BASE] Size [{size}]\n")
+            expected = run_base(size, data)
+            error = abs(expected - true)
+            expects.append(expected)
+            print(f"Difference: {round(error / true * 100)}%")
+            print(f"Error: {error} triangles\n")
+        times.append(elapsed())
+
+    draw_graph(sizes,times,expects,trues,'base.png')
+
+    expects = []
+    times = []
+    for size in sizes :
+        with elapsed_timer() as elapsed:
+            print(f"\n[TRIEST IMPR] Size [{size}]\n")
+            expected = run_improved(size, data)
+            error = abs(expected - true)
+            expects.append(expected)
+            print(f"Difference: {round(error / true * 100)}%")
+            print(f"Error: {error} triangles\n")
+        times.append(elapsed())
+
+    draw_graph(sizes,times,expects,trues,'improved.png')
+
 @contextmanager
 def elapsed_timer():
     start = default_timer()
@@ -164,48 +212,28 @@ if __name__=="__main__" :
     for index, row in df.iterrows():
         data.add(tuple([row["FromNodeId"], row["ToNodeId"]]))
 
-    sizes = [500, 750, 1000, 1250, 1500, 1750, 2000]
-    # diffs = []
-    # times = []
+    # test_with_multi_samples(data) #drawing graph
+
     size = 1750
-    # for size in sizes :
+    true = run_base(len(data), data)
+    
     with elapsed_timer() as elapsed:
         print(f"\n[TRIEST BASE] Size [{size}]\n")
         expected = run_base(size, data)
-        true = run_base(len(data), data)
         error = abs(expected - true)
-        # diffs.append(error)
         print(f"Difference: {round(error / true * 100)}%")
-        print(f"Error: {error} triangles\n")
-        # times.append(elapsed())
+        print(f"Error: {error} triangles")
+    print(f"Elapsed time: {elapsed()}\n")
 
-    # fig, ax1 = plt.subplots()
-    
-    # ax1.set_xlabel('Sample size')
-    # ax1.set_ylabel('Error triangles')
-    # ax1.plot(sizes, diffs, color='red')
-    # ax2 = ax1.twinx()
-    # ax2.set_ylabel('Elapsed time(s)')
-    # ax2.plot(sizes, times, color='green')
-    # plt.show()
-
-    # for size in sizes :
     with elapsed_timer() as elapsed:
         print(f"\n[TRIEST IMPR] Size [{size}]\n")
         expected = run_improved(size, data)
-        true = run_improved(len(data), data)
         error = abs(expected - true)
-        # diffs.append(error)
         print(f"Difference: {round(error / true * 100)}%")
-        print(f"Error: {error} triangles\n")
-        # times.append(elapsed())
+        print(f"Error: {error} triangles")
+    print(f"Elapsed time: {elapsed()}\n")
 
-    # fig, ax1 = plt.subplots()
+
+
+
     
-    # ax1.set_xlabel('Sample size')
-    # ax1.set_ylabel('Error triangles')
-    # ax1.plot(sizes, diffs, color='red')
-    # ax2 = ax1.twinx()
-    # ax2.set_ylabel('Elapsed time(s)')
-    # ax2.plot(sizes, times, color='green')
-    # plt.show()
