@@ -4,8 +4,6 @@ import networkx as nx
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 
-filename = os.path.join(os.getcwd(), "Homework 4", "example1.dat")
-
 class SpectralClustering:
     def __init__(self, nodes, k) -> None:
         self.nodes = nodes
@@ -42,24 +40,17 @@ class SpectralClustering:
     def KmeanClustering(self, Y):
         return KMeans(n_clusters=self.k).fit(Y).labels_
 
-def saveplot(filename):
-    savename = os.path.join(os.getcwd(), 'Homework 4', filename+'.png')
-    plt.savefig(savename)
-
-
-if __name__=="__main__":
+def main(filename, k):
     edge_list = nx.read_edgelist(filename, delimiter=",", nodetype=int, data=(("weight", int), ))
     graph = nx.Graph()
     graph.add_nodes_from(sorted(edge_list.nodes.keys()))
     graph.add_edges_from(edge_list.edges)
 
     nx.draw(graph, node_size=20)
-    saveplot('before_clustering')
+    plt.show()
     plt.close()
 
-    # example 1 has 4 clusters & example 2 has 2 clusters
-    k = 4
-    sc = SpectralClustering(len(edge_list.nodes.keys()),k)
+    sc = SpectralClustering(len(edge_list.nodes.keys()), k)
 
     # 1. Form the affinity matrix (same as adjcent matrix)
     A = sc.AffinityMatrix(graph)
@@ -74,5 +65,12 @@ if __name__=="__main__":
 
     plt.figure()
     nx.draw(graph, node_size=20, node_color=labels)
-    saveplot('after_cluster')
+    plt.show()
     plt.close()
+
+if __name__=="__main__":
+    filename = os.path.join(os.getcwd(), "Homework 4", "example1.dat")
+    main(filename, 4)
+
+    filename = os.path.join(os.getcwd(), "Homework 4", "example2.dat")
+    main(filename, 2)
