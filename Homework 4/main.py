@@ -49,6 +49,10 @@ def main(filename, k):
     nx.draw(graph, node_size=20)
     plt.show()
     plt.close()
+    
+    if(nx.is_connected(graph)):
+        plt.plot(sorted(nx.fiedler_vector(graph)))
+        plt.show()
 
     sc = SpectralClustering(len(edge_list.nodes.keys()), k)
 
