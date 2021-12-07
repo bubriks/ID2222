@@ -18,7 +18,9 @@ public class Jabeja {
   private int numberOfSwaps;
   private int round;
   private float T;
+  private float T_min = 0.00001f;
   private boolean resultFileCreated = false;
+  private Random random = new Random();
 
   //-------------------------------------------------------------------
   public Jabeja(HashMap<Integer, Node> graph, Config config) {
@@ -27,7 +29,13 @@ public class Jabeja {
     this.round = 0;
     this.numberOfSwaps = 0;
     this.config = config;
-    this.T = config.getTemperature();
+    if (config.isAnnealing()){
+      this.T = 1;
+    }
+    else{
+      this.T = config.getTemperature();
+    }
+    this.random.setSeed(config.getSeed());
   }
 
 
@@ -38,6 +46,12 @@ public class Jabeja {
         sampleAndSwap(id);
       }
 
+      if(config.isAnnealing()) { // reset every x rounds
+        if (round % 200 == 0) {
+          this.T = 1;
+        }
+      }
+
       //one cycle for all nodes have completed.
       //reduce the temperature
       saCoolDown();
@@ -46,14 +60,22 @@ public class Jabeja {
   }
 
   /**
-   * Simulated analealing cooling function
+   * Simulated annealing cooling function
    */
   private void saCoolDown(){
-    // TODO for second task
-    if (T > 1)
-      T -= config.getDelta();
-    if (T < 1)
-      T = 1;
+    if(config.isAnnealing()){
+      if (T > T_min) {
+        T *= config.getDelta();
+        if (T < T_min) {
+          T = T_min;
+        }
+      }
+    } else {
+      if (T > 1)
+        T -= config.getDelta();
+      if (T < 1)
+        T = 1;
+    }
   }
 
   /**
@@ -87,6 +109,13 @@ public class Jabeja {
     }
   }
 
+  /**
+   * Calculate the acceptance probability
+   */
+  private double acceptanceProbability(double new_value, double old_value){
+    return Math.exp((new_value - old_value) / T); // todo maybe pick a different solution
+  }
+
   public Node findPartner(int nodeId, Integer[] nodes){
 
     Node nodep = entireGraph.get(nodeId);
@@ -102,9 +131,18 @@ public class Jabeja {
       int d_pq = getDegree(nodep, nodeq.getColor());
       int d_qp = getDegree(nodeq, nodep.getColor());
       double new_value = Math.pow(d_pq, config.getAlpha()) + Math.pow(d_qp, config.getAlpha());
-      if(new_value * T > old_value && new_value > highestBenefit) {
-        bestPartner = nodeq;
-        highestBenefit = new_value;
+      if (config.isAnnealing()) {
+        double prob = random.nextDouble(); // between 0 and 1
+        double acceptanceProb = acceptanceProbability(new_value, old_value);
+        if (new_value != old_value && acceptanceProb > prob && acceptanceProb > highestBenefit) {
+          bestPartner = nodeq;
+          highestBenefit = acceptanceProb;
+        }
+      } else {
+        if (new_value * T > old_value && new_value > highestBenefit) {
+          bestPartner = nodeq;
+          highestBenefit = new_value;
+        }
       }
     }
 

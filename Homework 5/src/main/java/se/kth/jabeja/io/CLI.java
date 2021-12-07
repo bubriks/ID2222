@@ -57,6 +57,9 @@ public class CLI {
   @Option(name = "-outputDir", usage = "Location of the output file(s)")
   private static String OUTPUT_DIR = "./output";
 
+  @Option(name = "-ann", usage = "Indicates annealing utilization.")
+  private static boolean ANNEALING = false;
+
   public Config parseArgs(String[] args) throws FileNotFoundException {
     CmdLineParser parser = new CmdLineParser(this);
     parser.setUsageWidth(80);
@@ -110,6 +113,7 @@ public class CLI {
             .setNodeSelectionPolicy(nodeSelectionPolicy)
             .setGraphInitialColorPolicy(graphInitColorSelectionPolicy)
             .setOutputDir(OUTPUT_DIR)
-            .setAlpha(ALPHA);
+            .setAlpha(ALPHA)
+            .setAnnealing(ANNEALING);
   }
 }
