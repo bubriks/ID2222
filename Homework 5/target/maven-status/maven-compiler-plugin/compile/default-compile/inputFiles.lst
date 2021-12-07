@@ -1,0 +1,10 @@
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/Main.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/Node.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/io/FileIO.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/config/GraphInitColorPolicy.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/Jabeja.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/config/NodeSelectionPolicy.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/config/Config.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/io/GraphReader.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/io/CLI.java
+/home/bubrik/Desktop/ID2222/Homework 5/src/main/java/se/kth/jabeja/rand/RandNoGenerator.java
