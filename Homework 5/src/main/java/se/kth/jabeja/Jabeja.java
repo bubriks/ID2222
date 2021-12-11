@@ -134,7 +134,7 @@ public class Jabeja {
       if (config.isAnnealing()) {
         double prob = random.nextDouble(); // between 0 and 1
         double acceptanceProb = acceptanceProbability(new_value, old_value);
-        if (new_value != old_value && acceptanceProb > prob && acceptanceProb > highestBenefit) {
+        if (acceptanceProb > prob && acceptanceProb > highestBenefit) {
           bestPartner = nodeq;
           highestBenefit = acceptanceProb;
         }
