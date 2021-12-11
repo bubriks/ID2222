@@ -124,7 +124,7 @@ public class Jabeja {
   private double acceptanceProbability(double new_value, double old_value){
     switch(config.getStrategy()) {
       case "Advanced":
-        return Math.exp((new_value - old_value) / Math.pow(T, round));
+        // Nothing implemented
       case "Default":
       default:
         return Math.exp((new_value - old_value) / T);
