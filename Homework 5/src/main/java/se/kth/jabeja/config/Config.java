@@ -14,6 +14,7 @@ public class Config {
   private NodeSelectionPolicy nodeSelectionPolicy;
   private Float alpha;
   private boolean annealing;
+  private String strategy;
   private Integer restartRounds;
 
   public Config setAlpha(Float alpha) {
@@ -73,6 +74,11 @@ public class Config {
 
   public Config setAnnealing(boolean annealing) {
     this.annealing = annealing;
+    return this;
+  }
+
+  public Config setStrategy(String strategy) {
+    this.strategy = strategy;
     return this;
   }
 
@@ -172,6 +178,13 @@ public class Config {
 
   public Boolean isAnnealing() {
     return annealing;
+  }
+
+  public String getStrategy() {
+    if (strategy == null) {
+      throw new NullPointerException("Strategy is not defined.");
+    }
+    return strategy;
   }
 
   public Integer getRestartRounds() {

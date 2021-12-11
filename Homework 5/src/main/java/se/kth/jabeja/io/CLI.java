@@ -60,6 +60,9 @@ public class CLI {
   @Option(name = "-ann", usage = "Indicates annealing utilization.")
   private static boolean ANNEALING = false;
 
+  @Option(name = "-strategy", usage = "Strategy used for annealing.")
+  private static String STRATEGY = "Default";
+
   @Option(name = "-restart", usage = "Restart temperature after x rounds.")
   private int RESTART_ROUNDS = 200;
 
@@ -118,6 +121,7 @@ public class CLI {
             .setOutputDir(OUTPUT_DIR)
             .setAlpha(ALPHA)
             .setAnnealing(ANNEALING)
+            .setStrategy(STRATEGY)
             .setRestartRounds(RESTART_ROUNDS);
   }
 }

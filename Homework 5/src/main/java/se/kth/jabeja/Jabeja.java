@@ -41,13 +41,22 @@ public class Jabeja {
 
   //-------------------------------------------------------------------
   public void startJabeja() throws IOException {
+    int resetRounds = 0;
     for (round = 0; round < config.getRounds(); round++) {
       for (int id : entireGraph.keySet()) {
         sampleAndSwap(id);
       }
 
       if(config.isAnnealing()) {
-        if (round % config.getRestartRounds() == 0) { // reset every x rounds
+        // Count consecutive rounds with T being equal to T_min
+        if (T == T_min) {
+          resetRounds++;
+        } else {
+          resetRounds = 0;
+        }
+
+        // Reset if consecutive rounds reach certain number
+        if (resetRounds % config.getRestartRounds() == 0) {
           this.T = 1;
         }
       }
@@ -113,7 +122,14 @@ public class Jabeja {
    * Calculate the acceptance probability
    */
   private double acceptanceProbability(double new_value, double old_value){
-    return Math.exp((new_value - old_value) / T); // todo maybe pick a different solution
+    switch(config.getStrategy()) {
+      case "Advanced":
+        // always using only positive difference
+        return Math.exp(Math.abs(new_value - old_value) / T);
+      case "Default":
+      default:
+        return Math.exp((new_value - old_value) / T);
+    }
   }
 
   public Node findPartner(int nodeId, Integer[] nodes){
@@ -132,6 +148,9 @@ public class Jabeja {
       int d_qp = getDegree(nodeq, nodep.getColor());
       double new_value = Math.pow(d_pq, config.getAlpha()) + Math.pow(d_qp, config.getAlpha());
       if (config.isAnnealing()) {
+        if (new_value == old_value){
+          continue; // Done allow to not have acceptanceProbability == 1.0
+        }
         double prob = random.nextDouble(); // between 0 and 1
         double acceptanceProb = acceptanceProbability(new_value, old_value);
         if (acceptanceProb > prob && acceptanceProb > highestBenefit) {
