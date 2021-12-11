@@ -60,6 +60,9 @@ public class CLI {
   @Option(name = "-ann", usage = "Indicates annealing utilization.")
   private static boolean ANNEALING = false;
 
+  @Option(name = "-restart", usage = "Restart temperature after x rounds.")
+  private int RESTART_ROUNDS = 200;
+
   public Config parseArgs(String[] args) throws FileNotFoundException {
     CmdLineParser parser = new CmdLineParser(this);
     parser.setUsageWidth(80);
@@ -114,6 +117,7 @@ public class CLI {
             .setGraphInitialColorPolicy(graphInitColorSelectionPolicy)
             .setOutputDir(OUTPUT_DIR)
             .setAlpha(ALPHA)
-            .setAnnealing(ANNEALING);
+            .setAnnealing(ANNEALING)
+            .setRestartRounds(RESTART_ROUNDS);
   }
 }

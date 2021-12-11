@@ -14,6 +14,7 @@ public class Config {
   private NodeSelectionPolicy nodeSelectionPolicy;
   private Float alpha;
   private boolean annealing;
+  private Integer restartRounds;
 
   public Config setAlpha(Float alpha) {
     this.alpha = alpha;
@@ -72,6 +73,11 @@ public class Config {
 
   public Config setAnnealing(boolean annealing) {
     this.annealing = annealing;
+    return this;
+  }
+
+  public Config setRestartRounds(Integer restartRounds){
+    this.restartRounds = restartRounds;
     return this;
   }
 
@@ -166,6 +172,13 @@ public class Config {
 
   public Boolean isAnnealing() {
     return annealing;
+  }
+
+  public Integer getRestartRounds() {
+    if (restartRounds == null) {
+      throw new NullPointerException("Restart rounds is not defined.");
+    }
+    return restartRounds;
   }
 
   public Config createJabejaConfig() {

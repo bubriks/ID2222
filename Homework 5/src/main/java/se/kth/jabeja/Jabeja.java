@@ -46,8 +46,8 @@ public class Jabeja {
         sampleAndSwap(id);
       }
 
-      if(config.isAnnealing()) { // reset every x rounds
-        if (round % 200 == 0) {
+      if(config.isAnnealing()) {
+        if (round % config.getRestartRounds() == 0) { // reset every x rounds
           this.T = 1;
         }
       }
