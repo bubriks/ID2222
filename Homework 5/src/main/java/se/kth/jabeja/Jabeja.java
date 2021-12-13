@@ -21,7 +21,7 @@ public class Jabeja {
   private float T_min = 0.00001f;
   private boolean resultFileCreated = false;
   private Random random = new Random();
-
+  private int resetRounds = 0;
   //-------------------------------------------------------------------
   public Jabeja(HashMap<Integer, Node> graph, Config config) {
     this.entireGraph = graph;
@@ -41,7 +41,7 @@ public class Jabeja {
 
   //-------------------------------------------------------------------
   public void startJabeja() throws IOException {
-    int resetRounds = 0;
+    
     for (round = 0; round < config.getRounds(); round++) {
       for (int id : entireGraph.keySet()) {
         sampleAndSwap(id);
@@ -51,13 +51,13 @@ public class Jabeja {
         // Count consecutive rounds with T being equal to T_min
         if (T == T_min) {
           resetRounds++;
-        } else {
-          resetRounds = 0;
-        }
+        } 
 
         // Reset if consecutive rounds reach certain number
-        if (resetRounds % config.getRestartRounds() == 0) {
+        if (resetRounds == config.getRestartRounds()) {
+          logger.info("converged");
           this.T = 1;
+          resetRounds = 0;
         }
       }
 
